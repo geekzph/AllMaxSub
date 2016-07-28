@@ -131,7 +131,7 @@ int MaxSubsequence(int n, int x[])
 	p3 = new Node();
 	p1->next = NULL;
 	int flag = 0;
-	for (int i = 1; i <= n; i++) {
+	for (int i = 500; i <= n; i++) {
 		//initial
 		//第一个元素进入
 		//p1 = p2 = (Node *)malloc(sizeof(Node)); //申请新节点
@@ -253,8 +253,8 @@ int main(int argc, const char * argv[])
 
 	int *p;
 	int i;
-	GetData("data2w.txt", 1, 20000);
-	MaxSubsequence(20000, data);
+	GetData("data2w.txt", 1, 1000);
+	MaxSubsequence(1000, data);
 
 	end_time = clock();
 	duration_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
