@@ -106,19 +106,21 @@ void ClearList(Node *phead)
 	//printf("clearList函数执行，链表已经清除\n");
 }
 //重构链表
-Node *ReCreateList(Node *phead, int n, __int64 num)
+Node *ReCreateList(Node *&phead, int flag)
 {
 	Node *pNext;            //定义一个与pHead相邻节点
+	int i = 0;
 	if (phead == NULL)
 	{
 		printf("clearList函数执行，链表为空\n");
 		return NULL;
 	}
-	while (phead->next != NULL && phead->R <= num )
+	while (phead->next != NULL && i < flag - 1)
 	{
-		pNext = phead->next;//保存下一结点的指针
-		//free(phead);
-		phead = pNext;      //表头下移
+		pNext = phead->next;      //表头下移
+		free(phead);
+		phead = pNext;
+		i++;
 	}
 	return phead;
 }
@@ -131,13 +133,13 @@ int MaxSubsequence(int n, int x[])
 	p3 = new Node();
 	p1->next = NULL;
 	int flag = 0;
-	for (int i = 500; i <= n; i++) {
+	for (int i = 0; i <= n; i++) {
 		//initial
 		//第一个元素进入
 		//p1 = p2 = (Node *)malloc(sizeof(Node)); //申请新节点
 		if (p1->L >= 9000000 || p1->R >= 9000000)
 			i = i;
-		if (i == 15666)
+		if (i == 18)
 		{
 			i = i;
 			int s = x[i];
@@ -175,30 +177,53 @@ int MaxSubsequence(int n, int x[])
 			{
 				//找到L更小的Li
 				//判断R的值，找到则重构链表
-				p3 = new Node();
-				p3 = p1;
-				p1 = ReCreateList(p1, flag, sum[i] + x[i]);
-				if (p1->R >= sum[i] + x[i])
+				p2 = new Node();
+				
+				p1 = ReCreateList(p1, flag);
+				p2 = p1;
+				p1->data[1] = i + 1;
+				p1->R = sum[i] + x[i];
+				int L = p1->L;
+				int R = p1->R;
+				while (p1 -> next != NULL)
 				{
-					p2 = new Node();/*下一个新节点*/
-					p2->next = NULL;
-					p2->next = p3;
+					flag = 2;
+					p1 = p1->next;
+					if (p1->L < L && p1->R >= R)
+					{
+						p1 = p2;
+						break;
+					}
+					if (p1->L < L && p1->R < R)
+					{
+						//p2 = ReCreateList(p2, flag);
+						//p2->next = NULL;
+						p1->data[1] = i + 1;
+						p1 -> R = R;
+					}
+				}
+				sum[i + 1] = x[i] + sum[i];
+				//if (p1->R >= sum[i] + x[i])
+				//{
+				//	p2 = new Node();/*下一个新节点*/
+				//	p2->next = NULL;
+				//	p2->next = p3;
 
-					p1 = p2;
-					p2->data[0] = i;
-					p2->data[1] = i + 1;
-					p2->L = sum[i];
-					p2->R = sum[i] + x[i];
-					sum[i + 1] = x[i] + sum[i];
-				}
-				else
-				{
-					p1->data[0] = p1->data[0];
-					p1->data[1] = i + 1;
-					p1->L = p1 -> L;
-					p1->R = sum[i] + x[i];
-					sum[i + 1] = x[i] + sum[i]; 
-				}
+				//	p1 = p2;
+				//	p2->data[0] = i;
+				//	p2->data[1] = i + 1;
+				//	p2->L = sum[i];
+				//	p2->R = sum[i] + x[i];
+				//	sum[i + 1] = x[i] + sum[i];
+				//}
+				//else
+				//{
+				//	p1->data[0] = p1->data[0];
+				//	p1->data[1] = i + 1;
+				//	p1->L = p1 -> L;
+				//	p1->R = sum[i] + x[i];
+				//	sum[i + 1] = x[i] + sum[i]; 
+				//}
 				
 			}
 			else if (flag == 0)
@@ -218,10 +243,10 @@ int MaxSubsequence(int n, int x[])
 			else sum[i + 1] = x[i] + sum[i];
 
 		}
-		else if (x[i + 1] > 0)
+		/*else if (x[i + 1] > 0)
 		{
 			sum[i + 1] = x[i] + sum[i];
-		}
+		}*/
 		else
 		{
 			sum[i + 1] = x[i] + sum[i];
@@ -244,6 +269,7 @@ int main(int argc, const char * argv[])
 	start_time = clock();
 
 	int a[] = { 4, -5, 3, -3, 1, 2, -2, 2, -2, 1, 5 };
+	int test[] = { 5, -3, -1, 5, -4, -5, 0, 3, 3, 6, 1, -3, -6, 3, -6, 3, -1, 0, 3, -3, 0, 6, 1, -4, 0, -6 };
 	/*int b[] = { -2, 11, -4, 13, -5, -2 };
 	int c[] = { 4, -5, 3, -3, 1, 2 };
 	int d[] = { -10, 3, -2, -4, -5, 1 };
@@ -253,8 +279,8 @@ int main(int argc, const char * argv[])
 
 	int *p;
 	int i;
-	GetData("data2w.txt", 1, 1000);
-	MaxSubsequence(1000, data);
+	GetData("data2w.txt", 1, 20000);
+	MaxSubsequence(11, a);
 
 	end_time = clock();
 	duration_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
